@@ -1,8 +1,5 @@
 import customtkinter as ctk
-
-
-ctk.set_appearance_mode("Dark") 
-ctk.set_default_color_theme("dark-blue") 
+import Datos
 
 class Menu(ctk.CTk):
     def __init__(self):
@@ -15,22 +12,24 @@ class Menu(ctk.CTk):
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
-        self.main_frame = ctk.CTkFrame(self, fg_color="transparent")
-        self.main_frame.grid(row=0, column=0)
+        self.construir_menu()
+
+    def construir_menu(self):
+        self.frame_menu = ctk.CTkFrame(self, fg_color="transparent")
+        self.frame_menu.grid(row=0, column=0)
 
         self.label = ctk.CTkLabel(
-            self.main_frame, 
+            self.frame_menu, 
             text="Método de nodos", 
             font=("Helvetica", 20),
             text_color=("gray70") 
         )
         self.label.pack(pady=(0, 20))
 
-        # Botón de inicio
         self.btn_inicio = ctk.CTkButton(
-            self.main_frame,
+            self.frame_menu,
             text="INICIO",
-            command=self.iniciar_accion,
+            command=self.actividad, 
             width=200,
             height=40,
             corner_radius=20, 
@@ -39,8 +38,9 @@ class Menu(ctk.CTk):
         )
         self.btn_inicio.pack()
 
-    def iniciar_accion(self):
-        print("A")
+    def actividad(self):
+        self.frame_menu.destroy()
+        Datos.entradas(self)
 
 if __name__ == "__main__":
     app = Menu()
