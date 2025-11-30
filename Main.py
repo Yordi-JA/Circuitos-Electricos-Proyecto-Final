@@ -1,6 +1,7 @@
 import customtkinter as ctk
 import Datos
 
+
 class Menu(ctk.CTk):
     def __init__(self):
         super().__init__()
