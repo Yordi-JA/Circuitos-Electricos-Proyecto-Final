@@ -148,8 +148,10 @@ class Menu(ctk.CTk):
         self.btn_ayuda.place(relx=0.95, rely=0.95, anchor="se")
 
     def actividad(self):
+        self.ocultar_menu_principal()
         Option.option(self)
-
+        
+        
 if __name__ == "__main__":
     ctk.set_appearance_mode("dark")
     app = Menu()
