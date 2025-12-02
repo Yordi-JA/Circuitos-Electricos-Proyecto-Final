@@ -1,5 +1,6 @@
 import customtkinter as ctk
 import Grafo
+import Matrix
 
 def option(app):
     frame_opciones = ctk.CTkFrame(
@@ -42,7 +43,11 @@ def option(app):
     btn_datos = ctk.CTkButton(
         frame_opciones,
         text="Datos",
-        command=lambda: print("Ir a Datos"),
+        command=lambda: [
+            frame_opciones.destroy(), 
+            btn_regresar.destroy(), 
+            Matrix.show_matrix(app, lambda: option(app))
+        ],
         width=200,
         height=45,
         corner_radius=25,

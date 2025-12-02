@@ -1,7 +1,9 @@
 import customtkinter as ctk
+import os
+import platform
+import subprocess
 
 def show_about(app):
-    # Separamos el título del cuerpo del texto
     titulo = "ACERCA DE"
     texto = (
         "Método de nodos\n"
@@ -16,12 +18,27 @@ def show_about(app):
     _create_card(app, titulo, texto)
 
 def show_help(app):
-    titulo = "AYUDA"
-    texto = (
-        "Aca se pone como funciona el programa\n"
-        "(lo que se debe meter y lo que entrega)"
-    )
-    _create_card(app, titulo, texto)
+
+    nombre_archivo = "manual.pdf"
+    
+    ruta_archivo = os.path.abspath(nombre_archivo)
+
+    if os.path.exists(ruta_archivo):
+        system_platform = platform.system()
+
+        try:
+            if system_platform == 'Windows':
+                os.startfile(ruta_archivo)
+            elif system_platform == 'Darwin':  # macOS
+                subprocess.call(('open', ruta_archivo))
+            else:  # Linux
+                subprocess.call(('xdg-open', ruta_archivo))
+        except Exception as e:
+            print(f"Error al abrir el archivo: {e}")
+    else:
+        titulo = "ERROR"
+        texto = f"No se encontró el archivo\n"
+        _create_card(app, titulo, texto)
 
 def _create_card(app, title, content):
     app.ocultar_menu_principal()
