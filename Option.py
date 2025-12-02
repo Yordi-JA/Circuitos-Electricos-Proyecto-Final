@@ -1,7 +1,7 @@
 import customtkinter as ctk
+import Grafo
 
 def option(app):
-    # 1. Crear el Marco Central
     frame_opciones = ctk.CTkFrame(
         app,
         fg_color="#2b2b2b",
@@ -20,11 +20,16 @@ def option(app):
     )
     label_titulo.pack(padx=40, pady=(30, 20))
 
-    # Botón 1
+    def ir_a_grafo():
+        frame_opciones.destroy()
+        btn_regresar.destroy()
+        
+        Grafo.show_grafo(app, return_callback=lambda: option(app)) 
+
     btn_grafo = ctk.CTkButton(
         frame_opciones,
-        text="Grafo dirigido",
-        command=lambda: print("Ir a Grafo"),
+        text="Grafo",
+        command=ir_a_grafo,
         width=200,
         height=45,
         corner_radius=25,
@@ -34,7 +39,6 @@ def option(app):
     )
     btn_grafo.pack(padx=40, pady=(0, 15))
 
-    # Botón 2
     btn_datos = ctk.CTkButton(
         frame_opciones,
         text="Datos",
@@ -48,21 +52,18 @@ def option(app):
     )
     btn_datos.pack(padx=40, pady=(0, 30))
 
-    # --- BOTÓN REGRESAR (Estilo "Acerca de") ---
     btn_regresar = ctk.CTkButton(
         app, 
         text="Regresar",
         command=lambda: cerrar_opciones(app, frame_opciones, btn_regresar),
-        # --- AQUÍ ESTÁ EL CAMBIO DE ESTILO ---
-        width=100,              # Más pequeño (como el de Acerca de)
+        width=100,   
         height=30,
-        fg_color="#2b2b2b",     # Fondo oscuro
-        border_width=1,         # Borde delgado
-        border_color="#444",    # Color del borde gris
-        hover_color="#3a3a3a",  # Color al pasar el mouse
-        bg_color="#1a1a1a"      # Coincide con el fondo del canvas
+        fg_color="#2b2b2b",  
+        border_width=1,   
+        border_color="#444",  
+        hover_color="#3a3a3a",  
+        bg_color="#1a1a1a"     
     )
-    # Posición izquierda inferior
     btn_regresar.place(relx=0.05, rely=0.95, anchor="sw")
 
 def cerrar_opciones(app, frame, boton):
