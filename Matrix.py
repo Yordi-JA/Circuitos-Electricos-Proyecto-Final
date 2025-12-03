@@ -1,6 +1,7 @@
 import customtkinter as ctk
 import cmath
 import math
+from Calculations import calculos
 
 entries_A = []
 entries_Y = []
@@ -8,7 +9,6 @@ entries_Vsk = []
 entries_Jsk = []
 
 def show_matrix(app, return_callback):
-
     card_frame = ctk.CTkFrame(
         app, 
         width=560,             
@@ -45,7 +45,6 @@ def show_matrix(app, return_callback):
     )
     btn_generar.pack(side="left", padx=10)
 
- 
     btn_regresar = ctk.CTkButton(
         dims_frame, 
         text="Regresar", 
@@ -64,7 +63,7 @@ def show_matrix(app, return_callback):
         hover_color="#5a52cc",
         width=70,
         height=28,
-        command=procesar_datos
+        command=procesar_datos 
     )
     btn_calcular.pack(side="right") 
 
@@ -92,7 +91,6 @@ def generar_grids(m_str, n_str, parent_frame):
         print("Error: Ingrese enteros > 0")
         return
 
-    # Limpiar el frame anterior
     for widget in parent_frame.winfo_children():
         widget.destroy()
     
@@ -102,7 +100,6 @@ def generar_grids(m_str, n_str, parent_frame):
     entries_Jsk.clear()
     
     crear_seccion_matriz(parent_frame, "A", m, n, entries_A)
-    
     crear_seccion_matriz(parent_frame, "Y", n, n, entries_Y, es_diagonal=True)
 
     cd_container = ctk.CTkFrame(parent_frame, fg_color="transparent")
@@ -110,27 +107,25 @@ def generar_grids(m_str, n_str, parent_frame):
     
     frame_left = ctk.CTkFrame(cd_container, fg_color="transparent")
     frame_left.pack(side="left", expand=True, fill="x")
+    # V_sk es n x 1
     crear_seccion_matriz(frame_left, "V_sk", n, 1, entries_Vsk)
 
     frame_right = ctk.CTkFrame(cd_container, fg_color="transparent")
     frame_right.pack(side="right", expand=True, fill="x")
+    # J_sk es n x 1
     crear_seccion_matriz(frame_right, "J_sk", n, 1, entries_Jsk)
 
 def crear_seccion_matriz(parent, nombre, filas, cols, storage_list, es_diagonal=False):
-    lbl = ctk.CTkLabel(parent, text=f"{nombre}", font=("Arial", 12, "bold"))
+    lbl = ctk.CTkLabel(parent, text=f"{nombre} ({filas}x{cols})", font=("Arial", 12, "bold"))
     lbl.pack(pady=(5, 0))
     
     grid_frame = ctk.CTkFrame(parent, fg_color="transparent")
     grid_frame.pack(pady=2)
 
-    row_entries = []
     for r in range(filas):
         row_data = []
         for c in range(cols):
             ph = "0"
-            if nombre in ["V_sk", "J_sk"]: ph = "0"
-            elif nombre == "Y": ph = "0"
-            
             entry = ctk.CTkEntry(grid_frame, width=50, height=25, font=("Arial", 11), placeholder_text=ph)
             entry.grid(row=r, column=c, padx=1, pady=1)
             
@@ -142,7 +137,7 @@ def crear_seccion_matriz(parent, nombre, filas, cols, storage_list, es_diagonal=
         storage_list.append(row_data)
 
 def parse_input(texto):
-    texto = texto.lower().replace(" ", "")
+    texto = str(texto).lower().replace(" ", "")
     if not texto: return 0j 
 
     try:
@@ -166,11 +161,33 @@ def procesar_datos():
         mat_Y = [[parse_input(e.get()) for e in row] for row in entries_Y]
         vec_Vsk = [[parse_input(e.get()) for e in row] for row in entries_Vsk]
         vec_Jsk = [[parse_input(e.get()) for e in row] for row in entries_Jsk]
-        # TEMPORAL, ACA VA A IR LA FUNCION PARA HACER LOS CALCULOS
-        print(f"A: {mat_A}")
-        print(f"Y: {mat_Y}")
-        print(f"V_sk: {vec_Vsk}")
-        print(f"J_sk: {vec_Jsk}")
         
+        print("\n" + "="*40)
+        print(" INICIANDO CÁLCULO ")
+        print("="*40)
+
+        Y_n, e_n, V_k, J_k, A_T = calculos(mat_A, mat_Y, vec_Vsk, vec_Jsk)
+
+        print("\n--- RESULTADOS OBTENIDOS ---")
+        
+        print(f"\n1. Matriz Transpuesta de A (A_T):\n{A_T}")
+        print("-" * 30)
+        
+        print(f"\n2. Admitancia de Nodos (Y_n):\n{Y_n}")
+        print("-" * 30)
+        
+        print(f"\n3. Voltajes de Nodo (e_n):\n{e_n}")
+        print("-" * 30)
+        
+        print(f"\n4. Voltajes en ramas (V_k):\n{V_k}")
+        print("-" * 30)
+        
+        print(f"\n5. Corrientes en ramas (J_k):\n{J_k}")
+        print("="*40 + "\n")
+
+    except ValueError as ve:
+        print(f"\nError de Valor: {ve}")
     except Exception as e:
-        print("Error:", e)
+        print(f"\nError Inesperado: {e}")
+        import traceback
+        traceback.print_exc()
