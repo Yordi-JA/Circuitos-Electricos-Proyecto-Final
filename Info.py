@@ -1,7 +1,18 @@
 import customtkinter as ctk
 import os
+import sys
 import platform
 import subprocess
+
+
+def resource_path(relative_path):
+    """ Obtiene la ruta absoluta al recurso, funciona para dev y para PyInstaller """
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 def show_about(app):
     titulo = "ACERCA DE"
@@ -21,7 +32,7 @@ def show_help(app):
 
     nombre_archivo = "manual.pdf"
     
-    ruta_archivo = os.path.abspath(nombre_archivo)
+    ruta_archivo = resource_path(nombre_archivo)
 
     if os.path.exists(ruta_archivo):
         system_platform = platform.system()
