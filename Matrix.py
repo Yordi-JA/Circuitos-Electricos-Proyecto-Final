@@ -2,6 +2,7 @@ import customtkinter as ctk
 import cmath
 import math
 from Calculations import calculos
+import Answers
 
 entries_A = []
 entries_Y = []
@@ -9,6 +10,7 @@ entries_Vsk = []
 entries_Jsk = []
 
 def show_matrix(app, return_callback):
+
     card_frame = ctk.CTkFrame(
         app, 
         width=560,             
@@ -19,6 +21,7 @@ def show_matrix(app, return_callback):
         border_color="#444"
     )
     card_frame.place(relx=0.5, rely=0.5, anchor="center")
+
     card_frame.pack_propagate(False) 
 
     dims_frame = ctk.CTkFrame(card_frame, fg_color="transparent", height=40)
@@ -33,6 +36,17 @@ def show_matrix(app, return_callback):
     lbl_n.pack(side="left", padx=(5, 0))
     entry_n = ctk.CTkEntry(dims_frame, width=35, placeholder_text="0")
     entry_n.pack(side="left", padx=5)
+
+    scroll_frame = ctk.CTkScrollableFrame(
+        card_frame, 
+        label_text="Matrices de entrada",
+        fg_color="#212121",    
+        corner_radius=15,      
+        label_fg_color="#333",  
+        height=200              
+    )
+    scroll_frame.pack(fill="both", expand=True, padx=40, pady=(5, 30))
+
 
     btn_generar = ctk.CTkButton(
         dims_frame, 
@@ -63,20 +77,10 @@ def show_matrix(app, return_callback):
         hover_color="#5a52cc",
         width=70,
         height=28,
-        command=procesar_datos 
+        command=lambda: procesar_datos(app, card_frame, return_callback) 
     )
     btn_calcular.pack(side="right") 
 
-    scroll_frame = ctk.CTkScrollableFrame(
-        card_frame, 
-        label_text="Matrices de entrada",
-        fg_color="#212121",    
-        corner_radius=15,      
-        label_fg_color="#333",  
-        height=200              
-    )
-
-    scroll_frame.pack(fill="both", expand=True, padx=40, pady=(5, 30))
 
 def cerrar_matrix(frame, callback):
     frame.destroy()
@@ -107,16 +111,14 @@ def generar_grids(m_str, n_str, parent_frame):
     
     frame_left = ctk.CTkFrame(cd_container, fg_color="transparent")
     frame_left.pack(side="left", expand=True, fill="x")
-    # V_sk es n x 1
     crear_seccion_matriz(frame_left, "V_sk", n, 1, entries_Vsk)
 
     frame_right = ctk.CTkFrame(cd_container, fg_color="transparent")
     frame_right.pack(side="right", expand=True, fill="x")
-    # J_sk es n x 1
     crear_seccion_matriz(frame_right, "J_sk", n, 1, entries_Jsk)
 
 def crear_seccion_matriz(parent, nombre, filas, cols, storage_list, es_diagonal=False):
-    lbl = ctk.CTkLabel(parent, text=f"{nombre} ({filas}x{cols})", font=("Arial", 12, "bold"))
+    lbl = ctk.CTkLabel(parent, text=f"{nombre}", font=("Arial", 12, "bold"))
     lbl.pack(pady=(5, 0))
     
     grid_frame = ctk.CTkFrame(parent, fg_color="transparent")
@@ -155,39 +157,32 @@ def parse_input(texto):
     except Exception:
         return 0j
 
-def procesar_datos():
+def procesar_datos(app, current_frame, main_menu_callback):
     try:
         mat_A = [[parse_input(e.get()).real for e in row] for row in entries_A]
         mat_Y = [[parse_input(e.get()) for e in row] for row in entries_Y]
         vec_Vsk = [[parse_input(e.get()) for e in row] for row in entries_Vsk]
         vec_Jsk = [[parse_input(e.get()) for e in row] for row in entries_Jsk]
         
-        print("\n" + "="*40)
-        print(" INICIANDO CÁLCULO ")
-        print("="*40)
-
         Y_n, e_n, V_k, J_k, A_T = calculos(mat_A, mat_Y, vec_Vsk, vec_Jsk)
 
-        print("\n--- RESULTADOS OBTENIDOS ---")
+        resultados = {
+            "A_T": A_T,
+            "Y_n": Y_n,
+            "e_n": e_n,
+            "V_k": V_k,
+            "J_k": J_k
+        }
+
+        current_frame.place_forget() 
         
-        print(f"\n1. Matriz Transpuesta de A (A_T):\n{A_T}")
-        print("-" * 30)
-        
-        print(f"\n2. Admitancia de Nodos (Y_n):\n{Y_n}")
-        print("-" * 30)
-        
-        print(f"\n3. Voltajes de Nodo (e_n):\n{e_n}")
-        print("-" * 30)
-        
-        print(f"\n4. Voltajes en ramas (V_k):\n{V_k}")
-        print("-" * 30)
-        
-        print(f"\n5. Corrientes en ramas (J_k):\n{J_k}")
-        print("="*40 + "\n")
+        Answers.mostrar_respuestas(
+            app, 
+            lambda: current_frame.place(relx=0.5, rely=0.5, anchor="center"), 
+            resultados
+        )
 
     except ValueError as ve:
         print(f"\nError de Valor: {ve}")
     except Exception as e:
         print(f"\nError Inesperado: {e}")
-        import traceback
-        traceback.print_exc()

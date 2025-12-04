@@ -18,13 +18,10 @@ def calculos(mat_A, mat_Y, vec_Vsk, vec_Jsk):
     term1b = term1a @ V_sk
     term1 = term1b
     term2 = A @ J_sk
-    I_sn = term1 + term2 
+    I_sn = term1 - term2 
 
-    print(term1)
-    print(term2)
 
     # Calcular e_n - Fórmula: e_n = inv(Y_n) * I_sn
-    #    Usamos linalg.solve porque es más estable numéricamente que invertir la matriz directamente.
     try:
         e_n = np.linalg.solve(Y_n, I_sn)
     except np.linalg.LinAlgError:
@@ -38,4 +35,6 @@ def calculos(mat_A, mat_Y, vec_Vsk, vec_Jsk):
     term4 = Y @ V_sk
     J_k = term3 - term4 + J_sk
 
-    return Y_n, e_n, V_k, J_k, I_sn
+    print(Y_n)
+
+    return Y_n, e_n, V_k, J_k, A_T
